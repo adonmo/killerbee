@@ -1,0 +1,3 @@
+include ':killerbee'
+include ':app'
+rootProject.name = "KillerBee"
