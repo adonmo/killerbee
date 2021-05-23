@@ -40,5 +40,7 @@ ext {
     targetSdkVersion = 29
 
     compileSdkVersion = 29
+
+    clientVersion = '1.2.5'
 }
 
