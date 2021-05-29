@@ -1,54 +1,49 @@
 package com.adonmo.killerbee
 
+import android.app.Service
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Handler
-import android.os.HandlerThread
+import android.os.IBinder
 import android.util.Log
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttException
-import org.eclipse.paho.client.mqttv3.MqttMessage
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import com.adonmo.killerbee.Constants.Companion.LOG_TAG
+import com.adonmo.killerbee.service.AndroidMQTTService
 
 
-class AndroidMQTTClient(private val mqttRunnerThread: HandlerThread) {
+class AndroidMQTTClient(private val appContext: Context, private val clientID: String, private val mqttEventsHandler: Handler) {
 
-    private lateinit var mqttHandler: Handler
+    private val mqttServiceConnection: ServiceConnection
 
-    fun runMQTTClient() {
-        mqttHandler = Handler(mqttRunnerThread.looper)
-        mqttHandler.post {
-            val topic = "MQTT Examples"
-            val content = "Message from MqttPublishSample"
-            val qos = 2
-            val broker = "tcp://broker.hivemq.com:1883"
-            val clientId = "JavaSample"
-            val persistence = MemoryPersistence()
-            try {
-                val sampleClient = MqttClient(broker, clientId, persistence)
-                val connOpts = MqttConnectOptions()
-                connOpts.isCleanSession = true
-                Log.d(LOG_TAG,"Connecting to broker: $broker")
-                sampleClient.connect(connOpts)
-                Log.d(LOG_TAG,"Connected")
-                Log.d(LOG_TAG,"Publishing message: $content")
-                val message = MqttMessage(content.toByteArray())
-                message.qos = qos
-                sampleClient.publish(topic, message)
-                Log.d(LOG_TAG,"Message published")
-                sampleClient.disconnect()
-                Log.d(LOG_TAG,"Disconnected")
-            } catch (me: MqttException) {
-                Log.d(LOG_TAG,"reason " + me.reasonCode)
-                Log.d(LOG_TAG,"msg " + me.message)
-                Log.d(LOG_TAG,"loc " + me.localizedMessage)
-                Log.d(LOG_TAG,"cause " + me.cause)
-                Log.e(LOG_TAG,"exception $me", me)
+    init {
+        val mqttClientThis = this
+        mqttServiceConnection = object : ServiceConnection {
+            override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
+                Log.d(LOG_TAG, "Connected to underlying service for [$clientID]")
             }
+
+            override fun onServiceDisconnected(componentName: ComponentName?) {
+                Log.d(LOG_TAG, "Disconnected from underlying service for [$clientID]")
+                mqttEventsHandler.postDelayed(mqttClientThis::initServiceConnection, 2000);
+            }
+
         }
     }
 
-    companion object {
-        const val LOG_TAG = "mqttClient"
+    fun connect() {
+        initServiceConnection()
     }
 
+    private fun initServiceConnection() {
+        Log.d(LOG_TAG, "Initiating service connection for client [$clientID]")
+        try {
+            val intent = Intent()
+            intent.setClass(appContext, AndroidMQTTService::class.java);
+            appContext.bindService(intent, mqttServiceConnection, Service.BIND_AUTO_CREATE)
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Unable to bind to underlying service for client [$clientID]")
+            mqttEventsHandler.postDelayed(this::initServiceConnection, 2000)
+        }
+    }
 }
