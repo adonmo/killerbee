@@ -21,7 +21,7 @@ class Helper {
             var request: Request? = null
             bundle?.let {
                 val payload: Parcelable? = it.getParcelable(Request::class.simpleName)
-                request =  payload as Request
+                request = payload as Request
             }
 
             return request
