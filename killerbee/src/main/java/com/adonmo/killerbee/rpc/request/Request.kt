@@ -1,6 +1,7 @@
 package com.adonmo.killerbee.rpc.request
 
-import android.os.Bundle
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-class Request(private val code: RequestCode, private val payload: Bundle) {
-}
+@Parcelize
+data class Request(val code: RequestCode, val payload: Parcelable) : Parcelable
