@@ -12,7 +12,11 @@ import com.adonmo.killerbee.Constants.Companion.LOG_TAG
 import com.adonmo.killerbee.service.AndroidMQTTService
 
 
-class AndroidMQTTClient(private val appContext: Context, private val clientID: String, private val mqttEventsHandler: Handler) {
+class AndroidMQTTClient(
+    private val appContext: Context,
+    private val clientID: String,
+    private val mqttEventsHandler: Handler
+) {
 
     private val mqttServiceConnection: ServiceConnection
 

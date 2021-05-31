@@ -1,9 +1,9 @@
 package com.adonmo.sample.killerbee
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import androidx.appcompat.app.AppCompatActivity
 import com.adonmo.killerbee.AndroidMQTTClient
 
 class MainActivity : AppCompatActivity() {
