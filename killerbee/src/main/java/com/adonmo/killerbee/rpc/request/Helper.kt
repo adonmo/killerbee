@@ -3,6 +3,7 @@ package com.adonmo.killerbee.rpc.request
 import android.os.Bundle
 import android.os.Message
 import android.os.Messenger
+import android.os.Parcelable
 
 class Helper {
     companion object {
@@ -13,6 +14,17 @@ class Helper {
             message.data = bundle
             message.replyTo = replyTo
             return message
+        }
+
+        fun getRPCRequestFromMessage(message: Message): Request? {
+            val bundle = message.data
+            var request: Request? = null
+            bundle?.let {
+                val payload: Parcelable? = it.getParcelable(Request::class.simpleName)
+                request =  payload as Request
+            }
+
+            return request
         }
     }
 }
