@@ -42,7 +42,7 @@ class RPCHandler : Handler() {
                 mqttConnectOptions.userName = connectOptions.username
             }
             connectOptions.password?.let {
-                mqttConnectOptions.password = connectOptions.password?.toCharArray()
+                mqttConnectOptions.password = connectOptions.password.toCharArray()
             }
             mqttConnectOptions.isCleanSession = true
             Log.d(LOG_TAG, "Connecting to mqtt broker [${connectOptions.serverURI}]")
