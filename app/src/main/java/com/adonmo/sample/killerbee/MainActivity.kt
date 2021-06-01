@@ -3,8 +3,10 @@ package com.adonmo.sample.killerbee
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.adonmo.killerbee.AndroidMQTTClient
+import com.adonmo.killerbee.Constants
 import com.adonmo.killerbee.rpc.request.ConnectOptions
 
 class MainActivity : AppCompatActivity() {
@@ -14,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mqttClient: AndroidMQTTClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.v(Constants.LOG_TAG, "Running on thread [${Thread.currentThread()}]")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mqttThread = HandlerThread("mqttThread")

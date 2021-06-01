@@ -1,6 +1,7 @@
 package com.adonmo.killerbee.service
 
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.os.Messenger
 import android.util.Log
@@ -14,10 +15,11 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
-class RPCHandler : Handler() {
+class RPCHandler(looper: Looper) : Handler(looper) {
     private val clientIDToClient: MutableMap<String, Client> = mutableMapOf()
 
     override fun handleMessage(msg: Message) {
+        Log.v(LOG_TAG, "Running on thread [${Thread.currentThread()}]")
         val request = Helper.getRPCRequestFromMessage(msg)
         Log.v(LOG_TAG, "Received rpc request [$request]")
         when (request?.code) {
