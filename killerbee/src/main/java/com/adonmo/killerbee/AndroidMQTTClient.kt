@@ -2,17 +2,19 @@ package com.adonmo.killerbee
 
 import android.os.Handler
 import android.util.Log
-import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
 import com.adonmo.killerbee.action.MQTTActionListener
 import com.adonmo.killerbee.adapter.Client
-import com.adonmo.killerbee.adapter.ConnectOptions
 import com.adonmo.killerbee.adapter.ClientCallback
+import com.adonmo.killerbee.adapter.ConnectOptions
+import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
+import java.util.concurrent.ScheduledExecutorService
 
 
 class AndroidMQTTClient(
     private val connectOptions: ConnectOptions,
     mqttEventsHandler: Handler,
-    androidMqttActionCallback: IMQTTConnectionCallback
+    androidMqttActionCallback: IMQTTConnectionCallback,
+    executorService: ScheduledExecutorService?
 ) {
 
     private val mqttClientAdapter = Client(
@@ -21,7 +23,8 @@ class AndroidMQTTClient(
         MQTTActionListener(
             mqttEventsHandler,
             androidMqttActionCallback
-        )
+        ),
+        executorService
     )
 
     fun connect() {
