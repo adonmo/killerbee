@@ -1,11 +1,10 @@
 package com.adonmo.killerbee.adapter
 
 import android.util.Log
-import com.adonmo.killerbee.AndroidMQTTUserContext
-import com.adonmo.killerbee.AndroidMqttAction
-import com.adonmo.killerbee.Constants.Companion.LOG_TAG
-import com.adonmo.killerbee.MQTTActionListener
-import com.adonmo.killerbee.MQTTBaseCallback
+import com.adonmo.killerbee.action.MQTTActionContext
+import com.adonmo.killerbee.action.MQTTAction
+import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
+import com.adonmo.killerbee.action.MQTTActionListener
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttException
@@ -13,14 +12,14 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
 class Client(
     private val connectOptions: ConnectOptions,
-    private val mqttBaseCallback: MQTTBaseCallback,
+    private val clientCallback: ClientCallback,
     private val mqttActionListener: MQTTActionListener
 ) {
     private val mqttClient: MqttAsyncClient =
         MqttAsyncClient(connectOptions.serverURI, connectOptions.clientID, MemoryPersistence())
 
     init {
-        mqttClient.setCallback(mqttBaseCallback)
+        mqttClient.setCallback(clientCallback)
     }
 
     fun connect() {
@@ -36,7 +35,7 @@ class Client(
             Log.d(LOG_TAG, "Connecting to mqtt broker [${connectOptions.serverURI}]")
             mqttClient.connect(
                 mqttConnectOptions,
-                AndroidMQTTUserContext(action = AndroidMqttAction.CONNECT, connectOptions),
+                MQTTActionContext(action = MQTTAction.CONNECT, connectOptions),
                 mqttActionListener
             )
             Log.d(
@@ -53,7 +52,7 @@ class Client(
     fun disconnect() {
         try {
             mqttClient.disconnect(
-                AndroidMQTTUserContext(action = AndroidMqttAction.DISCONNECT),
+                MQTTActionContext(action = MQTTAction.DISCONNECT),
                 mqttActionListener
             )
         } catch (me: MqttException) {
@@ -88,8 +87,8 @@ class Client(
                 payload,
                 qos,
                 retained,
-                AndroidMQTTUserContext(
-                    action = AndroidMqttAction.PUBLISH,
+                MQTTActionContext(
+                    action = MQTTAction.PUBLISH,
                     messagePayload = payload
                 ),
                 mqttActionListener
@@ -106,7 +105,7 @@ class Client(
             mqttClient.subscribe(
                 topicFilter,
                 qos,
-                AndroidMQTTUserContext(action = AndroidMqttAction.SUBSCRIBE, topic = topicFilter),
+                MQTTActionContext(action = MQTTAction.SUBSCRIBE, topic = topicFilter),
                 mqttActionListener
             )
         } catch (me: MqttException) {
@@ -121,8 +120,8 @@ class Client(
             mqttClient.subscribe(
                 topicFilters,
                 qos,
-                AndroidMQTTUserContext(
-                    action = AndroidMqttAction.SUBSCRIBE_MULTIPLE,
+                MQTTActionContext(
+                    action = MQTTAction.SUBSCRIBE_MULTIPLE,
                     topics = topicFilters
                 ),
                 mqttActionListener

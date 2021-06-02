@@ -1,15 +1,16 @@
-package com.adonmo.killerbee
+package com.adonmo.killerbee.adapter
 
 import android.os.Handler
-import com.adonmo.killerbee.adapter.ConnectOptions
+import com.adonmo.killerbee.IMQTTConnectionCallback
+import com.adonmo.killerbee.helper.ExecutionHelper
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttMessage
 
 
-class MQTTBaseCallback(
+class ClientCallback(
     private val mqttEventsHandler: Handler?,
-    private val actionCallback: AndroidMqttActionCallback,
+    private val actionCallback: IMQTTConnectionCallback,
     private val connectOptions: ConnectOptions
 ) : MqttCallback {
     override fun connectionLost(cause: Throwable?) {
@@ -24,7 +25,7 @@ class MQTTBaseCallback(
         ExecutionHelper.executeCallback(mqttEventsHandler) {
             actionCallback.messageArrived(
                 topic,
-                message
+                message?.payload
             )
         }
     }

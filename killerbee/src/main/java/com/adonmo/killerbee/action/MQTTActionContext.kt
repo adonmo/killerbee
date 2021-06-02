@@ -1,9 +1,9 @@
-package com.adonmo.killerbee
+package com.adonmo.killerbee.action
 
 import com.adonmo.killerbee.adapter.ConnectOptions
 
-data class AndroidMQTTUserContext(
-    val action: AndroidMqttAction,
+data class MQTTActionContext(
+    val action: MQTTAction,
     val connectOptions: ConnectOptions? = null,
     val topic: String? = null,
     val topics: Array<String>? = null,
@@ -13,7 +13,7 @@ data class AndroidMQTTUserContext(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as AndroidMQTTUserContext
+        other as MQTTActionContext
 
         if (action != other.action) return false
         if (connectOptions != other.connectOptions) return false

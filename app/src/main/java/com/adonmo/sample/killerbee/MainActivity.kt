@@ -6,10 +6,12 @@ import android.os.HandlerThread
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.adonmo.killerbee.AndroidMQTTClient
-import com.adonmo.killerbee.Constants
+import com.adonmo.killerbee.IMQTTConnectionCallback
+import com.adonmo.killerbee.action.MQTTActionStatus
+import com.adonmo.killerbee.helper.Constants
 import com.adonmo.killerbee.adapter.ConnectOptions
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
     private lateinit var mqttThread: HandlerThread
     private lateinit var mqttHandler: Handler
 
@@ -25,7 +27,39 @@ class MainActivity : AppCompatActivity() {
 
         mqttClient = AndroidMQTTClient(
             ConnectOptions(clientID = "OG", serverURI = "tcp://broker.hivemq.com:1883"),
-            mqttHandler
+            mqttHandler,
+            this
         )
+    }
+
+    override fun connectActionFinished(status: MQTTActionStatus, connectOptions: ConnectOptions) {
+        TODO("Not yet implemented")
+    }
+
+    override fun disconnectActionFinished(status: MQTTActionStatus) {
+        TODO("Not yet implemented")
+    }
+
+    override fun publishActionFinished(status: MQTTActionStatus, messagePayload: ByteArray) {
+        TODO("Not yet implemented")
+    }
+
+    override fun subscribeActionFinished(status: MQTTActionStatus, topic: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun subscribeMultipleActionFinished(status: MQTTActionStatus, topics: Array<String>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun connectionLost(connectOptions: ConnectOptions) {
+        TODO("Not yet implemented")
+    }
+
+    override fun messageArrived(
+        topic: String?,
+        message: ByteArray?
+    ) {
+        TODO("Not yet implemented")
     }
 }

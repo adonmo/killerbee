@@ -1,5 +1,5 @@
-package com.adonmo.killerbee
+package com.adonmo.killerbee.action
 
-enum class AndroidMqttAction {
+enum class MQTTAction {
     CONNECT, DISCONNECT, PUBLISH, SUBSCRIBE, SUBSCRIBE_MULTIPLE
 }

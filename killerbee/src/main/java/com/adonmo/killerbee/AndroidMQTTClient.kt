@@ -2,23 +2,25 @@ package com.adonmo.killerbee
 
 import android.os.Handler
 import android.util.Log
-import com.adonmo.killerbee.Constants.Companion.LOG_TAG
+import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
+import com.adonmo.killerbee.action.MQTTActionListener
 import com.adonmo.killerbee.adapter.Client
 import com.adonmo.killerbee.adapter.ConnectOptions
+import com.adonmo.killerbee.adapter.ClientCallback
 
 
 class AndroidMQTTClient(
     private val connectOptions: ConnectOptions,
     mqttEventsHandler: Handler,
-    androidMqttActionCallback: AndroidMqttActionCallback
+    androidMqttActionCallback: IMQTTConnectionCallback
 ) {
 
     private val mqttClientAdapter = Client(
         connectOptions,
-        MQTTBaseCallback(mqttEventsHandler, androidMqttActionCallback, connectOptions),
+        ClientCallback(mqttEventsHandler, androidMqttActionCallback, connectOptions),
         MQTTActionListener(
             mqttEventsHandler,
-            androidMqttActionCallback = androidMqttActionCallback
+            androidMqttActionCallback
         )
     )
 
