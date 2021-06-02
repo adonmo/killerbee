@@ -8,8 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.adonmo.killerbee.AndroidMQTTClient
 import com.adonmo.killerbee.IMQTTConnectionCallback
 import com.adonmo.killerbee.action.MQTTActionStatus
-import com.adonmo.killerbee.helper.Constants
 import com.adonmo.killerbee.adapter.ConnectOptions
+import com.adonmo.killerbee.helper.Constants
+import java.util.concurrent.ScheduledThreadPoolExecutor
 
 class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
     private lateinit var mqttThread: HandlerThread
@@ -28,7 +29,8 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
         mqttClient = AndroidMQTTClient(
             ConnectOptions(clientID = "OG", serverURI = "tcp://broker.hivemq.com:1883"),
             mqttHandler,
-            this
+            this,
+            executorService = ScheduledThreadPoolExecutor(2)
         )
     }
 
