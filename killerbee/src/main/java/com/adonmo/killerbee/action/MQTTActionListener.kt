@@ -8,7 +8,7 @@ import org.eclipse.paho.client.mqttv3.IMqttToken
 
 class MQTTActionListener(
     private val mqttEventsHandler: Handler?,
-    private val IMQTTConnectionCallback: IMQTTConnectionCallback
+    private val mqttConnectionCallback: IMQTTConnectionCallback
 ) : IMqttActionListener {
     override fun onSuccess(asyncActionToken: IMqttToken?) {
         executeUserActionCallback(asyncActionToken, MQTTActionStatus.SUCCESS)
@@ -23,24 +23,24 @@ class MQTTActionListener(
             val context = asyncActionToken?.userContext as MQTTActionContext
             when (context.action) {
                 MQTTAction.CONNECT ->
-                    IMQTTConnectionCallback.connectActionFinished(
+                    mqttConnectionCallback.connectActionFinished(
                         status,
                         context.connectOptions!!
                     )
                 MQTTAction.DISCONNECT ->
-                    IMQTTConnectionCallback.disconnectActionFinished(status)
+                    mqttConnectionCallback.disconnectActionFinished(status)
                 MQTTAction.PUBLISH ->
-                    IMQTTConnectionCallback.publishActionFinished(
+                    mqttConnectionCallback.publishActionFinished(
                         status,
                         context.messagePayload!!
                     )
                 MQTTAction.SUBSCRIBE ->
-                    IMQTTConnectionCallback.subscribeActionFinished(
+                    mqttConnectionCallback.subscribeActionFinished(
                         status,
                         context.topic!!
                     )
                 MQTTAction.SUBSCRIBE_MULTIPLE ->
-                    IMQTTConnectionCallback.subscribeMultipleActionFinished(
+                    mqttConnectionCallback.subscribeMultipleActionFinished(
                         status,
                         context.topics!!
                     )
