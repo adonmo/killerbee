@@ -36,6 +36,8 @@ class Client(
                 mqttConnectOptions.password = connectOptions.password.toCharArray()
             }
             mqttConnectOptions.isCleanSession = true
+            //Reconnect by default
+            mqttConnectOptions.isAutomaticReconnect = true
             Log.d(LOG_TAG, "Connecting to mqtt broker [${connectOptions.serverURI}]")
             mqttClient.connect(
                 mqttConnectOptions,
