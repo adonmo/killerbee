@@ -9,10 +9,18 @@ import com.adonmo.killerbee.adapter.ConnectOptions
 
 class AndroidMQTTClient(
     private val connectOptions: ConnectOptions,
-    private val mqttEventsHandler: Handler
+    private val mqttEventsHandler: Handler,
+    private val androidMqttActionCallback: AndroidMqttActionCallback
 ) {
 
-    private val mqttClientAdapter = Client(connectOptions, mqttEventsHandler)
+    private val mqttClientAdapter = Client(
+        connectOptions,
+        MQTTBaseCallback(mqttEventsHandler, androidMqttActionCallback, connectOptions),
+        MQTTActionListener(
+            mqttEventsHandler,
+            androidMqttActionCallback = androidMqttActionCallback
+        )
+    )
 
     fun connect() {
         Log.d(LOG_TAG, "Sending connect action for [${connectOptions.clientID}]")
@@ -32,16 +40,22 @@ class AndroidMQTTClient(
         Log.d(LOG_TAG, "Triggered forced disconnect action for [${connectOptions.clientID}]")
     }
 
-    fun publish() {
-
+    fun publish(topic: String, payload: ByteArray, qos: Int, retained: Boolean) {
+        Log.v(LOG_TAG, "Sending publish for [${connectOptions.clientID}] on [$topic] for [${payload.size}] bytes")
+        mqttClientAdapter.publish(topic, payload, qos, retained)
+        Log.v(LOG_TAG, "Triggered publish for [${connectOptions.clientID}] on [$topic] for [${payload.size}] bytes")
     }
 
-    fun subscribe(topic: String) {
-
+    fun subscribe(topic: String, qos: Int) {
+        Log.d(LOG_TAG, "Sending subscribe for [${connectOptions.clientID}] on [$topic]")
+        mqttClientAdapter.subscribe(topic, qos)
+        Log.d(LOG_TAG, "Triggered subscribe for [${connectOptions.clientID}] on [$topic]")
     }
 
-    fun subscribe(topics: Array<String>) {
-
+    fun subscribe(topics: Array<String>, qos: IntArray) {
+        Log.d(LOG_TAG, "Sending subscribe for [${connectOptions.clientID}] on [$topics]")
+        mqttClientAdapter.subscribeMultiple(topics, qos)
+        Log.d(LOG_TAG, "Triggered subscribe for [${connectOptions.clientID}] on [$topics]")
     }
 
 }

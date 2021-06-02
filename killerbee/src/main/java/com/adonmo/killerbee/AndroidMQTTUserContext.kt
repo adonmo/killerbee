@@ -4,10 +4,10 @@ import com.adonmo.killerbee.adapter.ConnectOptions
 
 data class AndroidMQTTUserContext(
     val action: AndroidMqttAction,
-    val connectOptions: ConnectOptions?,
-    val topic: String?,
-    val topics: Array<String>?,
-    val messagePayload: ByteArray?
+    val connectOptions: ConnectOptions? = null,
+    val topic: String? = null,
+    val topics: Array<String>? = null,
+    val messagePayload: ByteArray? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

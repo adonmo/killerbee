@@ -1,14 +1,27 @@
 package com.adonmo.killerbee.adapter
 
-import android.os.Handler
 import android.util.Log
+import com.adonmo.killerbee.AndroidMQTTUserContext
+import com.adonmo.killerbee.AndroidMqttAction
 import com.adonmo.killerbee.Constants.Companion.LOG_TAG
-import org.eclipse.paho.client.mqttv3.*
+import com.adonmo.killerbee.MQTTActionListener
+import com.adonmo.killerbee.MQTTBaseCallback
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
-class Client(private val connectOptions: ConnectOptions, private val mqttEventsHandler: Handler) {
+class Client(
+    private val connectOptions: ConnectOptions,
+    private val mqttBaseCallback: MQTTBaseCallback,
+    private val mqttActionListener: MQTTActionListener
+) {
     private val mqttClient: MqttAsyncClient =
         MqttAsyncClient(connectOptions.serverURI, connectOptions.clientID, MemoryPersistence())
+
+    init {
+        mqttClient.setCallback(mqttBaseCallback)
+    }
 
     fun connect() {
         try {
@@ -21,7 +34,11 @@ class Client(private val connectOptions: ConnectOptions, private val mqttEventsH
             }
             mqttConnectOptions.isCleanSession = true
             Log.d(LOG_TAG, "Connecting to mqtt broker [${connectOptions.serverURI}]")
-            mqttClient.connect(mqttConnectOptions)
+            mqttClient.connect(
+                mqttConnectOptions,
+                AndroidMQTTUserContext(action = AndroidMqttAction.CONNECT, connectOptions),
+                mqttActionListener
+            )
             Log.d(
                 LOG_TAG,
                 "Connected to mqtt broker [${connectOptions.serverURI}] for [${connectOptions.clientID}]"
@@ -35,7 +52,10 @@ class Client(private val connectOptions: ConnectOptions, private val mqttEventsH
 
     fun disconnect() {
         try {
-            mqttClient.disconnect()
+            mqttClient.disconnect(
+                AndroidMQTTUserContext(action = AndroidMqttAction.DISCONNECT),
+                mqttActionListener
+            )
         } catch (me: MqttException) {
             Log.e(
                 LOG_TAG,
@@ -63,7 +83,17 @@ class Client(private val connectOptions: ConnectOptions, private val mqttEventsH
 
     fun publish(topic: String, payload: ByteArray, qos: Int, retained: Boolean) {
         try {
-            mqttClient.publish(topic, payload, qos, retained)
+            mqttClient.publish(
+                topic,
+                payload,
+                qos,
+                retained,
+                AndroidMQTTUserContext(
+                    action = AndroidMqttAction.PUBLISH,
+                    messagePayload = payload
+                ),
+                mqttActionListener
+            )
         } catch (me: MqttException) {
             Log.e(LOG_TAG, "MQTT exception while publishing for [${connectOptions.clientID}]", me)
         } catch (e: Exception) {
@@ -71,11 +101,31 @@ class Client(private val connectOptions: ConnectOptions, private val mqttEventsH
         }
     }
 
-    fun subscribe(topicFilter: String, qos: Int, messageListener: IMqttMessageListener) {
+    fun subscribe(topicFilter: String, qos: Int) {
         try {
-            mqttClient.subscribe(topicFilter, qos, messageListener)
+            mqttClient.subscribe(
+                topicFilter,
+                qos,
+                AndroidMQTTUserContext(action = AndroidMqttAction.SUBSCRIBE, topic = topicFilter),
+                mqttActionListener
+            )
         } catch (me: MqttException) {
-            Log.e(LOG_TAG, "MQTT exception while publishing for [${connectOptions.clientID}]", me)
+            Log.e(LOG_TAG, "MQTT exception while subscribing for [${connectOptions.clientID}]", me)
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Unexpected error", e)
+        }
+    }
+
+    fun subscribeMultiple(topicFilters: Array<String>, qos: IntArray) {
+        try {
+            mqttClient.subscribe(
+                topicFilters,
+                qos,
+                AndroidMQTTUserContext(action = AndroidMqttAction.SUBSCRIBE_MULTIPLE, topics = topicFilters),
+                mqttActionListener
+            )
+        } catch (me: MqttException) {
+            Log.e(LOG_TAG, "MQTT exception while subscribing for [${connectOptions.clientID}]", me)
         } catch (e: Exception) {
             Log.e(LOG_TAG, "Unexpected error", e)
         }
