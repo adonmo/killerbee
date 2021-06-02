@@ -1,4 +1,4 @@
-package com.adonmo.killerbee.rpc.request
+package com.adonmo.killerbee.adapter
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

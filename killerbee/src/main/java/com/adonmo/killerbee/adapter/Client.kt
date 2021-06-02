@@ -3,17 +3,12 @@ package com.adonmo.killerbee.adapter
 import android.os.Handler
 import android.util.Log
 import com.adonmo.killerbee.Constants.Companion.LOG_TAG
-import com.adonmo.killerbee.rpc.request.ConnectOptions
-import org.eclipse.paho.client.mqttv3.IMqttMessageListener
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
 class Client(private val connectOptions: ConnectOptions, private val mqttEventsHandler: Handler) {
-    private var status: ConnectionStatus = ConnectionStatus.DISCONNECTED
-    private val mqttClient: MqttClient =
-        MqttClient(connectOptions.serverURI, connectOptions.clientID, MemoryPersistence())
+    private val mqttClient: MqttAsyncClient =
+        MqttAsyncClient(connectOptions.serverURI, connectOptions.clientID, MemoryPersistence())
 
     fun connect() {
         try {

@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.adonmo.killerbee.AndroidMQTTClient
 import com.adonmo.killerbee.Constants
-import com.adonmo.killerbee.rpc.request.ConnectOptions
+import com.adonmo.killerbee.adapter.ConnectOptions
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mqttThread: HandlerThread
@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         mqttHandler = Handler(mqttThread.looper)
 
         mqttClient = AndroidMQTTClient(
-            this.applicationContext,
             ConnectOptions(clientID = "OG", serverURI = "tcp://broker.hivemq.com:1883"),
             mqttHandler
         )
