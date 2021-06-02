@@ -121,7 +121,10 @@ class Client(
             mqttClient.subscribe(
                 topicFilters,
                 qos,
-                AndroidMQTTUserContext(action = AndroidMqttAction.SUBSCRIBE_MULTIPLE, topics = topicFilters),
+                AndroidMQTTUserContext(
+                    action = AndroidMqttAction.SUBSCRIBE_MULTIPLE,
+                    topics = topicFilters
+                ),
                 mqttActionListener
             )
         } catch (me: MqttException) {

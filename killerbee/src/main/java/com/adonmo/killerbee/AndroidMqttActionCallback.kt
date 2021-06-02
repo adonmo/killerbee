@@ -17,6 +17,6 @@ interface AndroidMqttActionCallback {
 
     fun connectionLost(connectOptions: ConnectOptions)
 
-    fun messageArrived(topic:String?, message: MqttMessage?)
+    fun messageArrived(topic: String?, message: MqttMessage?)
 
 }

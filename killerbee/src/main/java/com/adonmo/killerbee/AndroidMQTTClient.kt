@@ -9,8 +9,8 @@ import com.adonmo.killerbee.adapter.ConnectOptions
 
 class AndroidMQTTClient(
     private val connectOptions: ConnectOptions,
-    private val mqttEventsHandler: Handler,
-    private val androidMqttActionCallback: AndroidMqttActionCallback
+    mqttEventsHandler: Handler,
+    androidMqttActionCallback: AndroidMqttActionCallback
 ) {
 
     private val mqttClientAdapter = Client(
@@ -41,9 +41,15 @@ class AndroidMQTTClient(
     }
 
     fun publish(topic: String, payload: ByteArray, qos: Int, retained: Boolean) {
-        Log.v(LOG_TAG, "Sending publish for [${connectOptions.clientID}] on [$topic] for [${payload.size}] bytes")
+        Log.v(
+            LOG_TAG,
+            "Sending publish for [${connectOptions.clientID}] on [$topic] for [${payload.size}] bytes"
+        )
         mqttClientAdapter.publish(topic, payload, qos, retained)
-        Log.v(LOG_TAG, "Triggered publish for [${connectOptions.clientID}] on [$topic] for [${payload.size}] bytes")
+        Log.v(
+            LOG_TAG,
+            "Triggered publish for [${connectOptions.clientID}] on [$topic] for [${payload.size}] bytes"
+        )
     }
 
     fun subscribe(topic: String, qos: Int) {
