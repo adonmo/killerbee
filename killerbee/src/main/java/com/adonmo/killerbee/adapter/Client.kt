@@ -39,6 +39,7 @@ class Client(
             //Reconnect by default
             mqttConnectOptions.isAutomaticReconnect = true
             mqttConnectOptions.keepAliveInterval = 30
+            mqttConnectOptions.maxReconnectDelay = 60
             mqttClient.connect(
                 mqttConnectOptions,
                 MQTTActionContext(action = MQTTAction.CONNECT, connectOptions),
