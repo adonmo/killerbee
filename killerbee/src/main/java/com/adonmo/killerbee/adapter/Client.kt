@@ -38,15 +38,11 @@ class Client(
             mqttConnectOptions.isCleanSession = true
             //Reconnect by default
             mqttConnectOptions.isAutomaticReconnect = true
-            Log.d(LOG_TAG, "Connecting to mqtt broker [${connectOptions.serverURI}]")
+            mqttConnectOptions.keepAliveInterval = 30
             mqttClient.connect(
                 mqttConnectOptions,
                 MQTTActionContext(action = MQTTAction.CONNECT, connectOptions),
                 mqttActionListener
-            )
-            Log.d(
-                LOG_TAG,
-                "Connected to mqtt broker [${connectOptions.serverURI}] for [${connectOptions.clientID}]"
             )
         } catch (me: MqttException) {
             Log.e(LOG_TAG, "MQTT exception while connecting for [${connectOptions.clientID}]", me)
