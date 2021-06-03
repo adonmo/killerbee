@@ -27,12 +27,14 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
         mqttThread.start()
         mqttHandler = Handler(mqttThread.looper)
 
-        executor = ScheduledThreadPoolExecutor(2)
+        /* As it stands a minimum of 4 threads seems to be necessary to let the MQTT client run
+            as it blocks a few of them(3 based on testing) with a looper  most likely */
+        executor = ScheduledThreadPoolExecutor(4)
         mqttClient = AndroidMQTTClient(
             ConnectOptions(clientID = "OG", serverURI = "tcp://broker.hivemq.com:1883"),
             mqttHandler,
             this,
-            executorService = null
+            executorService = executor
         )
         mqttClient.connect()
     }
@@ -42,7 +44,10 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
             mqttClient.subscribe("Jello", 1)
             mqttClient.subscribe(arrayOf("HelloBee", "BeeHello"), intArrayOf(1, 0))
         } else {
-            Log.e(LOG_TAG, "Connection Action Failed for [${connectOptions.clientID}] to [${connectOptions.serverURI}]")
+            Log.e(
+                LOG_TAG,
+                "Connection Action Failed for [${connectOptions.clientID}] to [${connectOptions.serverURI}]"
+            )
         }
     }
 
