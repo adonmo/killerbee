@@ -40,7 +40,9 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
     override fun connectActionFinished(status: MQTTActionStatus, connectOptions: ConnectOptions) {
         if (status == MQTTActionStatus.SUCCESS) {
             mqttClient.subscribe("Jello", 1)
-            mqttClient.subscribe(arrayOf("Hello", "World"), intArrayOf(1, 0))
+            mqttClient.subscribe(arrayOf("HelloBee", "BeeHello"), intArrayOf(1, 0))
+        } else {
+            Log.e(LOG_TAG, "Connection Action Failed for [${connectOptions.clientID}] to [${connectOptions.serverURI}]")
         }
     }
 
@@ -49,25 +51,28 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
     }
 
     override fun publishActionFinished(status: MQTTActionStatus, messagePayload: ByteArray) {
-        if(status == MQTTActionStatus.SUCCESS) {
+        if (status == MQTTActionStatus.SUCCESS) {
             Log.d(LOG_TAG, "Published message $messagePayload")
         }
     }
 
     override fun subscribeActionFinished(status: MQTTActionStatus, topic: String) {
-        if(status == MQTTActionStatus.SUCCESS) {
-            mqttClient.publish("Hello", "World".toByteArray(), 1, false)
+        if (status == MQTTActionStatus.SUCCESS) {
+            mqttClient.publish("HelloBee", "World".toByteArray(), 1, false)
         }
     }
 
     override fun subscribeMultipleActionFinished(status: MQTTActionStatus, topics: Array<String>) {
-        if(status == MQTTActionStatus.SUCCESS) {
-            mqttClient.publish("Hello", "World".toByteArray(), 1, false)
+        if (status == MQTTActionStatus.SUCCESS) {
+            mqttClient.publish("HelloBee", "World".toByteArray(), 1, false)
         }
     }
 
     override fun connectionLost(connectOptions: ConnectOptions) {
-        Log.d(LOG_TAG, "Connection lost for [${connectOptions.clientID}] from [${connectOptions.serverURI}]")
+        Log.d(
+            LOG_TAG,
+            "Connection lost for [${connectOptions.clientID}] from [${connectOptions.serverURI}]"
+        )
     }
 
     override fun messageArrived(
