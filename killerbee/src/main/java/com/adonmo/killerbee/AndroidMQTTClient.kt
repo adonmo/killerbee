@@ -36,7 +36,7 @@ class AndroidMQTTClient(
     fun disconnect() {
         Log.d(LOG_TAG, "Sending disconnect action for [${connectOptions.clientID}]")
         mqttClientAdapter.disconnect()
-        Log.d(LOG_TAG, "Triggered connect action for [${connectOptions.clientID}]")
+        Log.d(LOG_TAG, "Triggered disconnect action for [${connectOptions.clientID}]")
     }
 
     fun forceDisconnect() {

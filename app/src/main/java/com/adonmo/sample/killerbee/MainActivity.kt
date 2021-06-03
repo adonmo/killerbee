@@ -9,7 +9,7 @@ import com.adonmo.killerbee.AndroidMQTTClient
 import com.adonmo.killerbee.IMQTTConnectionCallback
 import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.adapter.ConnectOptions
-import com.adonmo.killerbee.helper.Constants
+import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
 import java.util.concurrent.ScheduledThreadPoolExecutor
 
 class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
@@ -17,51 +17,66 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
     private lateinit var mqttHandler: Handler
 
     private lateinit var mqttClient: AndroidMQTTClient
+    private lateinit var executor: ScheduledThreadPoolExecutor
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.v(Constants.LOG_TAG, "Running on thread [${Thread.currentThread()}]")
+        Log.v(LOG_TAG, "Running on thread [${Thread.currentThread()}]")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mqttThread = HandlerThread("mqttThread")
         mqttThread.start()
         mqttHandler = Handler(mqttThread.looper)
 
+        executor = ScheduledThreadPoolExecutor(2)
         mqttClient = AndroidMQTTClient(
             ConnectOptions(clientID = "OG", serverURI = "tcp://broker.hivemq.com:1883"),
             mqttHandler,
             this,
-            executorService = ScheduledThreadPoolExecutor(2)
+            executorService = null
         )
+        mqttClient.connect()
     }
 
     override fun connectActionFinished(status: MQTTActionStatus, connectOptions: ConnectOptions) {
-        TODO("Not yet implemented")
+        if (status == MQTTActionStatus.SUCCESS) {
+            mqttClient.subscribe("Jello", 1)
+            mqttClient.subscribe(arrayOf("Hello", "World"), intArrayOf(1, 0))
+        }
     }
 
     override fun disconnectActionFinished(status: MQTTActionStatus) {
-        TODO("Not yet implemented")
+        Log.d(LOG_TAG, "Disconnect Action Status: [$status]")
     }
 
     override fun publishActionFinished(status: MQTTActionStatus, messagePayload: ByteArray) {
-        TODO("Not yet implemented")
+        if(status == MQTTActionStatus.SUCCESS) {
+            Log.d(LOG_TAG, "Published message $messagePayload")
+        }
     }
 
     override fun subscribeActionFinished(status: MQTTActionStatus, topic: String) {
-        TODO("Not yet implemented")
+        if(status == MQTTActionStatus.SUCCESS) {
+            mqttClient.publish("Hello", "World".toByteArray(), 1, false)
+        }
     }
 
     override fun subscribeMultipleActionFinished(status: MQTTActionStatus, topics: Array<String>) {
-        TODO("Not yet implemented")
+        if(status == MQTTActionStatus.SUCCESS) {
+            mqttClient.publish("Hello", "World".toByteArray(), 1, false)
+        }
     }
 
     override fun connectionLost(connectOptions: ConnectOptions) {
-        TODO("Not yet implemented")
+        Log.d(LOG_TAG, "Connection lost for [${connectOptions.clientID}] from [${connectOptions.serverURI}]")
     }
 
     override fun messageArrived(
         topic: String?,
         message: ByteArray?
     ) {
-        TODO("Not yet implemented")
+        message?.let {
+            Log.d(LOG_TAG, "Received message [$message]")
+        }
+        //mqttClient.disconnect()
     }
 }
