@@ -34,7 +34,7 @@ class ClientCallback(
     override fun deliveryComplete(token: IMqttDeliveryToken?) {}
 
     override fun connectComplete(reconnect: Boolean, serverURI: String?) {
-        if(reconnect) {
+        if (reconnect) {
             ExecutionHelper.executeCallback(mqttEventsHandler) {
                 actionCallback.connectActionFinished(
                     MQTTActionStatus.SUCCESS,

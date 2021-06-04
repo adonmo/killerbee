@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
                 cleanSession = true,
                 keepAliveInterval = 30,
                 maxReconnectDelay = 60000,
-                automaticReconnect = true
+                automaticReconnect = true,
             ),
             mqttHandler,
             this,

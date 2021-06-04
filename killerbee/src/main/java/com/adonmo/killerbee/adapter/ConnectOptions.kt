@@ -24,7 +24,7 @@ data class ConnectOptions(
     val connectionTimeout: Int = 30,
     val serverURIs: Array<String>? = null,
     val mqttVersion: Int = 0,
-    val automaticReconnect:Boolean = true,
+    val automaticReconnect: Boolean = true,
     val maxReconnectDelay: Int = 128000,
     val customWebSocketHeaders: Properties? = null,
     val executorServiceTimeout: Int = 1,

@@ -2,7 +2,6 @@ package com.adonmo.killerbee
 
 import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.adapter.ConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttMessage
 
 interface IMQTTConnectionCallback {
 
