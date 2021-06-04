@@ -32,17 +32,20 @@ class MQTTActionListener(
                 MQTTAction.PUBLISH ->
                     mqttConnectionCallback.publishActionFinished(
                         status,
-                        context.messagePayload!!
+                        context.messagePayload!!,
+                        null
                     )
                 MQTTAction.SUBSCRIBE ->
                     mqttConnectionCallback.subscribeActionFinished(
                         status,
-                        context.topic!!
+                        context.topic!!,
+                        null
                     )
                 MQTTAction.SUBSCRIBE_MULTIPLE ->
                     mqttConnectionCallback.subscribeMultipleActionFinished(
                         status,
-                        context.topics!!
+                        context.topics!!,
+                        null
                     )
             }
         }

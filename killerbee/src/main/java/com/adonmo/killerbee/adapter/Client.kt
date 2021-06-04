@@ -1,13 +1,13 @@
 package com.adonmo.killerbee.adapter
 
-import android.util.Log
+import com.adonmo.killerbee.IMQTTConnectionCallback
 import com.adonmo.killerbee.action.MQTTAction
 import com.adonmo.killerbee.action.MQTTActionContext
 import com.adonmo.killerbee.action.MQTTActionListener
+import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.helper.ConnectionHelper
-import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
+import com.adonmo.killerbee.helper.ExecutionHelper
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient
-import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.TimerPingSender
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import java.util.concurrent.ScheduledExecutorService
@@ -16,7 +16,8 @@ class Client(
     private val connectOptions: ConnectOptions,
     clientCallback: ClientCallback,
     private val mqttActionListener: MQTTActionListener,
-    executorService: ScheduledExecutorService?
+    executorService: ScheduledExecutorService?,
+    private val androidConnectionCallback: IMQTTConnectionCallback
 ) {
     private val mqttClient: MqttAsyncClient =
         MqttAsyncClient(
@@ -32,101 +33,101 @@ class Client(
     }
 
     fun connect() {
-        try {
-            val mqttConnectOptions = ConnectionHelper.getMqttConnectOptions(connectOptions)
-            mqttClient.connect(
-                mqttConnectOptions,
-                MQTTActionContext(action = MQTTAction.CONNECT, connectOptions),
-                mqttActionListener
-            )
-        } catch (me: MqttException) {
-            Log.e(LOG_TAG, "MQTT exception while connecting for [${connectOptions.clientID}]", me)
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "Unexpected error", e)
-        }
+        ExecutionHelper.executeMQTTClientAction(
+            {
+                val mqttConnectOptions = ConnectionHelper.getMqttConnectOptions(connectOptions)
+                mqttClient.connect(
+                    mqttConnectOptions,
+                    MQTTActionContext(action = MQTTAction.CONNECT, connectOptions),
+                    mqttActionListener
+                )
+            },
+            { e ->
+                androidConnectionCallback.connectActionFinished(
+                    MQTTActionStatus.FAILED,
+                    connectOptions,
+                    e
+                )
+            })
     }
 
     fun disconnect() {
-        try {
+        ExecutionHelper.executeMQTTClientAction({
             mqttClient.disconnect(
                 MQTTActionContext(action = MQTTAction.DISCONNECT),
                 mqttActionListener
             )
-        } catch (me: MqttException) {
-            Log.e(
-                LOG_TAG,
-                "MQTT exception while disconnecting for [${connectOptions.clientID}]",
-                me
-            )
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "Unexpected error", e)
-        }
+        }, { e -> androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, e) })
     }
 
     fun forceDisconnect() {
-        try {
+        ExecutionHelper.executeMQTTClientAction({
             mqttClient.disconnectForcibly()
-        } catch (me: MqttException) {
-            Log.e(
-                LOG_TAG,
-                "MQTT exception while disconnecting for [${connectOptions.clientID}]",
-                me
-            )
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "Unexpected error", e)
-        }
+        }, { e -> androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, e) })
     }
 
     fun publish(topic: String, payload: ByteArray, qos: Int, retained: Boolean) {
-        try {
-            mqttClient.publish(
-                topic,
-                payload,
-                qos,
-                retained,
-                MQTTActionContext(
-                    action = MQTTAction.PUBLISH,
-                    messagePayload = payload
-                ),
-                mqttActionListener
-            )
-        } catch (me: MqttException) {
-            Log.e(LOG_TAG, "MQTT exception while publishing for [${connectOptions.clientID}]", me)
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "Unexpected error", e)
-        }
+        ExecutionHelper.executeMQTTClientAction(
+            {
+                mqttClient.publish(
+                    topic,
+                    payload,
+                    qos,
+                    retained,
+                    MQTTActionContext(
+                        action = MQTTAction.PUBLISH,
+                        messagePayload = payload
+                    ),
+                    mqttActionListener
+                )
+            },
+            { e ->
+                androidConnectionCallback.publishActionFinished(
+                    MQTTActionStatus.FAILED,
+                    payload,
+                    e
+                )
+            })
     }
 
     fun subscribe(topicFilter: String, qos: Int) {
-        try {
-            mqttClient.subscribe(
-                topicFilter,
-                qos,
-                MQTTActionContext(action = MQTTAction.SUBSCRIBE, topic = topicFilter),
-                mqttActionListener
-            )
-        } catch (me: MqttException) {
-            Log.e(LOG_TAG, "MQTT exception while subscribing for [${connectOptions.clientID}]", me)
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "Unexpected error", e)
-        }
+        ExecutionHelper.executeMQTTClientAction(
+            {
+                mqttClient.subscribe(
+                    topicFilter,
+                    qos,
+                    MQTTActionContext(action = MQTTAction.SUBSCRIBE, topic = topicFilter),
+                    mqttActionListener
+                )
+            },
+            { e ->
+                androidConnectionCallback.subscribeActionFinished(
+                    MQTTActionStatus.FAILED,
+                    topicFilter,
+                    e
+                )
+            })
     }
 
     fun subscribeMultiple(topicFilters: Array<String>, qos: IntArray) {
-        try {
-            mqttClient.subscribe(
-                topicFilters,
-                qos,
-                MQTTActionContext(
-                    action = MQTTAction.SUBSCRIBE_MULTIPLE,
-                    topics = topicFilters
-                ),
-                mqttActionListener
-            )
-        } catch (me: MqttException) {
-            Log.e(LOG_TAG, "MQTT exception while subscribing for [${connectOptions.clientID}]", me)
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "Unexpected error", e)
-        }
+        ExecutionHelper.executeMQTTClientAction(
+            {
+                mqttClient.subscribe(
+                    topicFilters,
+                    qos,
+                    MQTTActionContext(
+                        action = MQTTAction.SUBSCRIBE_MULTIPLE,
+                        topics = topicFilters
+                    ),
+                    mqttActionListener
+                )
+            },
+            { e ->
+                androidConnectionCallback.subscribeMultipleActionFinished(
+                    MQTTActionStatus.FAILED,
+                    topicFilters,
+                    e
+                )
+            })
     }
 }

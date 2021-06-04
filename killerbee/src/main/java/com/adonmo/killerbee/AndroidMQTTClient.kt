@@ -24,7 +24,8 @@ class AndroidMQTTClient(
             mqttEventsHandler,
             androidMqttActionCallback
         ),
-        executorService
+        executorService,
+        androidMqttActionCallback
     )
 
     fun connect() {

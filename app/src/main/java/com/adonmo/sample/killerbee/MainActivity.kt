@@ -46,7 +46,11 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
         mqttClient.connect()
     }
 
-    override fun connectActionFinished(status: MQTTActionStatus, connectOptions: ConnectOptions) {
+    override fun connectActionFinished(
+        status: MQTTActionStatus,
+        connectOptions: ConnectOptions,
+        exception: Exception?
+    ) {
         if (status == MQTTActionStatus.SUCCESS) {
             mqttClient.subscribe("Jello", 1)
             mqttClient.subscribe(arrayOf("HelloBee", "BeeHello"), intArrayOf(1, 0))
@@ -58,23 +62,35 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
         }
     }
 
-    override fun disconnectActionFinished(status: MQTTActionStatus) {
+    override fun disconnectActionFinished(status: MQTTActionStatus, exception: Exception?) {
         Log.d(LOG_TAG, "Disconnect Action Status: [$status]")
     }
 
-    override fun publishActionFinished(status: MQTTActionStatus, messagePayload: ByteArray) {
+    override fun publishActionFinished(
+        status: MQTTActionStatus,
+        messagePayload: ByteArray,
+        exception: Exception?
+    ) {
         if (status == MQTTActionStatus.SUCCESS) {
             Log.d(LOG_TAG, "Published message $messagePayload")
         }
     }
 
-    override fun subscribeActionFinished(status: MQTTActionStatus, topic: String) {
+    override fun subscribeActionFinished(
+        status: MQTTActionStatus,
+        topic: String,
+        exception: Exception?
+    ) {
         if (status == MQTTActionStatus.SUCCESS) {
             mqttClient.publish("HelloBee", "World".toByteArray(), 1, false)
         }
     }
 
-    override fun subscribeMultipleActionFinished(status: MQTTActionStatus, topics: Array<String>) {
+    override fun subscribeMultipleActionFinished(
+        status: MQTTActionStatus,
+        topics: Array<String>,
+        exception: Exception?
+    ) {
         if (status == MQTTActionStatus.SUCCESS) {
             mqttClient.publish("HelloBee", "World".toByteArray(), 1, false)
         }
