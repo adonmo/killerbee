@@ -1,16 +1,15 @@
 package com.adonmo.killerbee.adapter
 
 import android.util.Log
-import com.adonmo.killerbee.action.MQTTActionContext
 import com.adonmo.killerbee.action.MQTTAction
-import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
+import com.adonmo.killerbee.action.MQTTActionContext
 import com.adonmo.killerbee.action.MQTTActionListener
+import com.adonmo.killerbee.helper.ConnectionHelper
+import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.TimerPingSender
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.ScheduledExecutorService
 
 class Client(
@@ -20,7 +19,13 @@ class Client(
     executorService: ScheduledExecutorService?
 ) {
     private val mqttClient: MqttAsyncClient =
-        MqttAsyncClient(connectOptions.serverURI, connectOptions.clientID, MemoryPersistence(), TimerPingSender(), executorService)
+        MqttAsyncClient(
+            connectOptions.serverURI,
+            connectOptions.clientID,
+            MemoryPersistence(),
+            TimerPingSender(),
+            executorService
+        )
 
     init {
         mqttClient.setCallback(clientCallback)
@@ -28,18 +33,7 @@ class Client(
 
     fun connect() {
         try {
-            val mqttConnectOptions = MqttConnectOptions()
-            connectOptions.username?.let {
-                mqttConnectOptions.userName = connectOptions.username
-            }
-            connectOptions.password?.let {
-                mqttConnectOptions.password = connectOptions.password.toCharArray()
-            }
-            mqttConnectOptions.isCleanSession = true
-            //Reconnect by default
-            mqttConnectOptions.isAutomaticReconnect = true
-            mqttConnectOptions.keepAliveInterval = 30
-            mqttConnectOptions.maxReconnectDelay = 60
+            val mqttConnectOptions = ConnectionHelper.getMqttConnectOptions(connectOptions)
             mqttClient.connect(
                 mqttConnectOptions,
                 MQTTActionContext(action = MQTTAction.CONNECT, connectOptions),

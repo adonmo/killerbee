@@ -31,7 +31,14 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
             as it blocks a few of them(3 based on testing) with a looper  most likely */
         executor = ScheduledThreadPoolExecutor(4)
         mqttClient = AndroidMQTTClient(
-            ConnectOptions(clientID = "OG", serverURI = "tcp://broker.hivemq.com:1883"),
+            ConnectOptions(
+                clientID = "OG",
+                serverURI = "tcp://broker.hivemq.com:1883",
+                cleanSession = true,
+                keepAliveInterval = 30,
+                maxReconnectDelay = 60000,
+                automaticReconnect = true
+            ),
             mqttHandler,
             this,
             executorService = executor
