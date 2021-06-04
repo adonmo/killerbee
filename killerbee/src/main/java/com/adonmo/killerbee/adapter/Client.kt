@@ -8,8 +8,6 @@ import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.helper.ConnectionHelper
 import com.adonmo.killerbee.helper.ExecutionHelper
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient
-import org.eclipse.paho.client.mqttv3.TimerPingSender
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import java.util.concurrent.ScheduledExecutorService
 
 class Client(
@@ -20,13 +18,7 @@ class Client(
     private val androidConnectionCallback: IMQTTConnectionCallback
 ) {
     private val mqttClient: MqttAsyncClient =
-        MqttAsyncClient(
-            connectOptions.serverURI,
-            connectOptions.clientID,
-            MemoryPersistence(),
-            TimerPingSender(),
-            executorService
-        )
+        ConnectionHelper.getMqttAsyncClient(connectOptions, executorService)
 
     init {
         mqttClient.setCallback(clientCallback)
