@@ -1,5 +1,10 @@
 package com.adonmo.killerbee.helper
 
+import android.os.Handler
+import com.adonmo.killerbee.IMQTTConnectionCallback
+import com.adonmo.killerbee.action.MQTTActionListener
+import com.adonmo.killerbee.adapter.Client
+import com.adonmo.killerbee.adapter.ClientCallback
 import com.adonmo.killerbee.adapter.ConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
@@ -65,6 +70,23 @@ object ConnectionHelper {
             MemoryPersistence(),
             TimerPingSender(),
             executorService
+        )
+    }
+
+    fun getMqttClientAdapter(connectOptions: ConnectOptions,
+                             mqttEventsHandler: Handler,
+                             androidMqttActionCallback: IMQTTConnectionCallback,
+                             executorService: ScheduledExecutorService?
+    ): Client {
+        return  Client(
+            connectOptions,
+            ClientCallback(mqttEventsHandler, androidMqttActionCallback, connectOptions),
+            MQTTActionListener(
+                mqttEventsHandler,
+                androidMqttActionCallback
+            ),
+            executorService,
+            androidMqttActionCallback
         )
     }
 }
