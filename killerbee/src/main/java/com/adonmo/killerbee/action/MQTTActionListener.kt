@@ -14,38 +14,39 @@ class MQTTActionListener(
         executeUserActionCallback(asyncActionToken, MQTTActionStatus.SUCCESS)
     }
 
-    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-        executeUserActionCallback(asyncActionToken, MQTTActionStatus.FAILED)
+    override fun onFailure(asyncActionToken: IMqttToken?, throwable: Throwable?) {
+        executeUserActionCallback(asyncActionToken, MQTTActionStatus.FAILED, Exception(throwable?.localizedMessage))
     }
 
-    private fun executeUserActionCallback(asyncActionToken: IMqttToken?, status: MQTTActionStatus) {
+    private fun executeUserActionCallback(asyncActionToken: IMqttToken?, status: MQTTActionStatus, exception: Exception? = null) {
         ExecutionHelper.executeCallback(mqttEventsHandler) {
             val context = asyncActionToken?.userContext as MQTTActionContext
             when (context.action) {
                 MQTTAction.CONNECT ->
                     mqttConnectionCallback.connectActionFinished(
                         status,
-                        context.connectOptions!!
+                        context.connectOptions!!,
+                        exception
                     )
                 MQTTAction.DISCONNECT ->
-                    mqttConnectionCallback.disconnectActionFinished(status)
+                    mqttConnectionCallback.disconnectActionFinished(status, exception)
                 MQTTAction.PUBLISH ->
                     mqttConnectionCallback.publishActionFinished(
                         status,
                         context.messagePayload!!,
-                        null
+                        exception
                     )
                 MQTTAction.SUBSCRIBE ->
                     mqttConnectionCallback.subscribeActionFinished(
                         status,
                         context.topic!!,
-                        null
+                        exception
                     )
                 MQTTAction.SUBSCRIBE_MULTIPLE ->
                     mqttConnectionCallback.subscribeMultipleActionFinished(
                         status,
                         context.topics!!,
-                        null
+                        exception
                     )
             }
         }
