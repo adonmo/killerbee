@@ -6,7 +6,7 @@ import com.adonmo.killerbee.action.MQTTActionListener
 import com.adonmo.killerbee.adapter.Client
 import com.adonmo.killerbee.adapter.ClientCallback
 import com.adonmo.killerbee.adapter.ConnectOptions
-import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
+import com.adonmo.killerbee.helper.Constants.LOG_TAG
 import java.util.concurrent.ScheduledExecutorService
 
 

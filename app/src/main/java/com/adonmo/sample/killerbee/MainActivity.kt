@@ -9,7 +9,7 @@ import com.adonmo.killerbee.AndroidMQTTClient
 import com.adonmo.killerbee.IMQTTConnectionCallback
 import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.adapter.ConnectOptions
-import com.adonmo.killerbee.helper.Constants.Companion.LOG_TAG
+import com.adonmo.killerbee.helper.Constants.LOG_TAG
 import java.util.concurrent.ScheduledThreadPoolExecutor
 
 class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
