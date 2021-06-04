@@ -6,8 +6,11 @@ import com.adonmo.killerbee.action.MQTTActionContext
 import com.adonmo.killerbee.action.MQTTActionListener
 import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.helper.ConnectionHelper
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkObject
+import io.mockk.verify
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.junit.Before
@@ -75,13 +78,25 @@ class ClientTest {
             )
         } throws exceptionOnConnect
         client.connect()
-        verify(exactly = 1) { androidConnectionCallback.connectActionFinished(MQTTActionStatus.FAILED, connectOptions, exceptionOnConnect) }
+        verify(exactly = 1) {
+            androidConnectionCallback.connectActionFinished(
+                MQTTActionStatus.FAILED,
+                connectOptions,
+                exceptionOnConnect
+            )
+        }
     }
 
     @Test
     fun connect() {
         client.connect()
-        verify(exactly = 0) { androidConnectionCallback.connectActionFinished(MQTTActionStatus.FAILED, connectOptions, any()) }
+        verify(exactly = 0) {
+            androidConnectionCallback.connectActionFinished(
+                MQTTActionStatus.FAILED,
+                connectOptions,
+                any()
+            )
+        }
     }
 
     @Test
@@ -94,13 +109,23 @@ class ClientTest {
             )
         } throws exceptionOnDisconnect
         client.disconnect()
-        verify(exactly = 1) { androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, exceptionOnDisconnect) }
+        verify(exactly = 1) {
+            androidConnectionCallback.disconnectActionFinished(
+                MQTTActionStatus.FAILED,
+                exceptionOnDisconnect
+            )
+        }
     }
 
     @Test
     fun disconnect() {
         client.disconnect()
-        verify(exactly = 0) { androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, any()) }
+        verify(exactly = 0) {
+            androidConnectionCallback.disconnectActionFinished(
+                MQTTActionStatus.FAILED,
+                any()
+            )
+        }
     }
 
     @Test
@@ -110,13 +135,23 @@ class ClientTest {
             mqttAsyncClient.disconnectForcibly()
         } throws exceptionOnDisconnect
         client.forceDisconnect()
-        verify(exactly = 1) { androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, exceptionOnDisconnect) }
+        verify(exactly = 1) {
+            androidConnectionCallback.disconnectActionFinished(
+                MQTTActionStatus.FAILED,
+                exceptionOnDisconnect
+            )
+        }
     }
 
     @Test
     fun forceDisconnect() {
         client.forceDisconnect()
-        verify(exactly = 0) { androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, any()) }
+        verify(exactly = 0) {
+            androidConnectionCallback.disconnectActionFinished(
+                MQTTActionStatus.FAILED,
+                any()
+            )
+        }
     }
 
     @Test
@@ -140,7 +175,13 @@ class ClientTest {
             )
         } throws exceptionOnPublish
         client.publish(topic, payload, qos, retained)
-        verify(exactly = 1) { androidConnectionCallback.publishActionFinished(MQTTActionStatus.FAILED, payload, exceptionOnPublish) }
+        verify(exactly = 1) {
+            androidConnectionCallback.publishActionFinished(
+                MQTTActionStatus.FAILED,
+                payload,
+                exceptionOnPublish
+            )
+        }
     }
 
     @Test
@@ -150,7 +191,13 @@ class ClientTest {
         val qos = 0
         val retained = false
         client.publish(topic, payload, qos, retained)
-        verify(exactly = 0) { androidConnectionCallback.publishActionFinished(MQTTActionStatus.FAILED, any(), any()) }
+        verify(exactly = 0) {
+            androidConnectionCallback.publishActionFinished(
+                MQTTActionStatus.FAILED,
+                any(),
+                any()
+            )
+        }
     }
 
     @Test
@@ -167,7 +214,13 @@ class ClientTest {
             )
         } throws exceptionOnSubscribe
         client.subscribe(topicFilter, qos)
-        verify(exactly = 1) { androidConnectionCallback.subscribeActionFinished(MQTTActionStatus.FAILED, topicFilter, exceptionOnSubscribe) }
+        verify(exactly = 1) {
+            androidConnectionCallback.subscribeActionFinished(
+                MQTTActionStatus.FAILED,
+                topicFilter,
+                exceptionOnSubscribe
+            )
+        }
     }
 
     @Test
@@ -175,7 +228,13 @@ class ClientTest {
         val topicFilter = "ABC"
         val qos = 0
         client.subscribe(topicFilter, qos)
-        verify(exactly = 0) { androidConnectionCallback.subscribeActionFinished(MQTTActionStatus.FAILED, any(), any()) }
+        verify(exactly = 0) {
+            androidConnectionCallback.subscribeActionFinished(
+                MQTTActionStatus.FAILED,
+                any(),
+                any()
+            )
+        }
     }
 
     @Test
@@ -192,7 +251,13 @@ class ClientTest {
             )
         } throws exceptionOnSubscribe
         client.subscribeMultiple(topicFilters, qos)
-        verify(exactly = 1) { androidConnectionCallback.subscribeMultipleActionFinished(MQTTActionStatus.FAILED, topicFilters, exceptionOnSubscribe) }
+        verify(exactly = 1) {
+            androidConnectionCallback.subscribeMultipleActionFinished(
+                MQTTActionStatus.FAILED,
+                topicFilters,
+                exceptionOnSubscribe
+            )
+        }
     }
 
     @Test
@@ -200,6 +265,12 @@ class ClientTest {
         val topicFilters = arrayOf("ABC", "DEF")
         val qos = intArrayOf(1, 0)
         client.subscribeMultiple(topicFilters, qos)
-        verify(exactly = 0) { androidConnectionCallback.subscribeMultipleActionFinished(MQTTActionStatus.FAILED, any(), any()) }
+        verify(exactly = 0) {
+            androidConnectionCallback.subscribeMultipleActionFinished(
+                MQTTActionStatus.FAILED,
+                any(),
+                any()
+            )
+        }
     }
 }
