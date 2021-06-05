@@ -5,6 +5,9 @@ def LIB_GROUP_ID = 'com.adonmo.libraries'
 def LIB_ARTIFACT_ID = 'killerbee'
 def LIB_VERSION = '1.0.0'
 
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier "sources"
@@ -16,8 +19,8 @@ publishing {
             name = "GithubPackages"
             url = uri("https://maven.pkg.github.com/adonmo/killerbee")
             credentials {
-                username = System.getenv('GITHUB_USER') ?: project.properties['GITHUB_USER']
-                password = System.getenv('GITHUB_PERSONAL_ACCESS_TOKEN') ?: project.properties['GITHUB_PERSONAL_ACCESS_TOKEN']
+                username = githubProperties['GITHUB_USER']
+                password = githubProperties['GITHUB_PERSONAL_ACCESS_TOKEN']
             }
         }
         maven {
