@@ -17,7 +17,8 @@ class ClientCallback(
     override fun connectionLost(cause: Throwable?) {
         ExecutionHelper.executeCallback(mqttEventsHandler) {
             actionCallback.connectionLost(
-                connectOptions
+                connectOptions,
+                cause
             )
         }
     }

@@ -15,10 +15,10 @@ class MQTTActionListener(
     }
 
     override fun onFailure(asyncActionToken: IMqttToken?, throwable: Throwable?) {
-        executeUserActionCallback(asyncActionToken, MQTTActionStatus.FAILED, Exception(throwable?.localizedMessage))
+        executeUserActionCallback(asyncActionToken, MQTTActionStatus.FAILED, throwable)
     }
 
-    private fun executeUserActionCallback(asyncActionToken: IMqttToken?, status: MQTTActionStatus, exception: Exception? = null) {
+    private fun executeUserActionCallback(asyncActionToken: IMqttToken?, status: MQTTActionStatus, throwable: Throwable? = null) {
         ExecutionHelper.executeCallback(mqttEventsHandler) {
             val context = asyncActionToken?.userContext as MQTTActionContext
             when (context.action) {
@@ -26,27 +26,27 @@ class MQTTActionListener(
                     mqttConnectionCallback.connectActionFinished(
                         status,
                         context.connectOptions!!,
-                        exception
+                        throwable
                     )
                 MQTTAction.DISCONNECT ->
-                    mqttConnectionCallback.disconnectActionFinished(status, exception)
+                    mqttConnectionCallback.disconnectActionFinished(status, throwable)
                 MQTTAction.PUBLISH ->
                     mqttConnectionCallback.publishActionFinished(
                         status,
                         context.messagePayload!!,
-                        exception
+                        throwable
                     )
                 MQTTAction.SUBSCRIBE ->
                     mqttConnectionCallback.subscribeActionFinished(
                         status,
                         context.topic!!,
-                        exception
+                        throwable
                     )
                 MQTTAction.SUBSCRIBE_MULTIPLE ->
                     mqttConnectionCallback.subscribeMultipleActionFinished(
                         status,
                         context.topics!!,
-                        exception
+                        throwable
                     )
             }
         }

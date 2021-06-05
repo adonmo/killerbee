@@ -34,8 +34,9 @@ class ClientCallbackTest {
 
     @Test
     fun connectionLost() {
-        clientCallback.connectionLost(Exception())
-        verify(exactly = 1) { actionCallback.connectionLost(connectOptions) }
+        val exception = Exception("Bad Internet")
+        clientCallback.connectionLost(exception)
+        verify(exactly = 1) { actionCallback.connectionLost(connectOptions, exception) }
     }
 
     @Test

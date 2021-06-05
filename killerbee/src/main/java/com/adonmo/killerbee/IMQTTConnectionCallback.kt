@@ -8,30 +8,30 @@ interface IMQTTConnectionCallback {
     fun connectActionFinished(
         status: MQTTActionStatus,
         connectOptions: ConnectOptions,
-        exception: Exception? = null
+        throwable: Throwable? = null
     )
 
-    fun disconnectActionFinished(status: MQTTActionStatus, exception: Exception? = null)
+    fun disconnectActionFinished(status: MQTTActionStatus, throwable: Throwable? = null)
 
     fun publishActionFinished(
         status: MQTTActionStatus,
         messagePayload: ByteArray,
-        exception: Exception? = null
+        throwable: Throwable? = null
     )
 
     fun subscribeActionFinished(
         status: MQTTActionStatus,
         topic: String,
-        exception: Exception? = null
+        throwable: Throwable? = null
     )
 
     fun subscribeMultipleActionFinished(
         status: MQTTActionStatus,
         topics: Array<String>,
-        exception: Exception? = null
+        throwable: Throwable? = null
     )
 
-    fun connectionLost(connectOptions: ConnectOptions)
+    fun connectionLost(connectOptions: ConnectOptions, throwable: Throwable? = null)
 
     fun messageArrived(topic: String?, message: ByteArray?)
 

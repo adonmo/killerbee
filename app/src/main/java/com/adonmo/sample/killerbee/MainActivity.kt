@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
     override fun connectActionFinished(
         status: MQTTActionStatus,
         connectOptions: ConnectOptions,
-        exception: Exception?
+        throwable: Throwable?
     ) {
         if (status == MQTTActionStatus.SUCCESS) {
             mqttClient.subscribe("Jello", 1)
@@ -62,14 +62,14 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
         }
     }
 
-    override fun disconnectActionFinished(status: MQTTActionStatus, exception: Exception?) {
+    override fun disconnectActionFinished(status: MQTTActionStatus, throwable: Throwable?) {
         Log.d(LOG_TAG, "Disconnect Action Status: [$status]")
     }
 
     override fun publishActionFinished(
         status: MQTTActionStatus,
         messagePayload: ByteArray,
-        exception: Exception?
+        throwable: Throwable?
     ) {
         if (status == MQTTActionStatus.SUCCESS) {
             Log.d(LOG_TAG, "Published message $messagePayload")
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
     override fun subscribeActionFinished(
         status: MQTTActionStatus,
         topic: String,
-        exception: Exception?
+        throwable: Throwable?
     ) {
         if (status == MQTTActionStatus.SUCCESS) {
             mqttClient.publish("HelloBee", "World".toByteArray(), 1, false)
@@ -89,14 +89,14 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
     override fun subscribeMultipleActionFinished(
         status: MQTTActionStatus,
         topics: Array<String>,
-        exception: Exception?
+        throwable: Throwable?
     ) {
         if (status == MQTTActionStatus.SUCCESS) {
             mqttClient.publish("HelloBee", "World".toByteArray(), 1, false)
         }
     }
 
-    override fun connectionLost(connectOptions: ConnectOptions) {
+    override fun connectionLost(connectOptions: ConnectOptions, throwable: Throwable?) {
         Log.d(
             LOG_TAG,
             "Connection lost for [${connectOptions.clientID}] from [${connectOptions.serverURI}]"
