@@ -18,6 +18,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        //Use for local testing of library after assemble and publishToMavenLocal
+        //mavenLocal()
     }
 }
 
