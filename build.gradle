@@ -14,12 +14,24 @@ buildscript {
     }
 }
 
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+
 allprojects {
     repositories {
         google()
         mavenCentral()
         //Use for local testing of library after assemble and publishToMavenLocal
         //mavenLocal()
+
+        maven {
+            name = "KillerBee"
+            url = uri("https://maven.pkg.github.com/adonmo/killerbee")
+            credentials {
+                username = githubProperties['GITHUB_USER']
+                password = githubProperties['GITHUB_PERSONAL_ACCESS_TOKEN']
+            }
+        }
     }
 }
 
