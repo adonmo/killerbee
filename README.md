@@ -6,9 +6,9 @@ This package is currently hosted as a github package. Github currently supports 
 In short you need to have a github account to use this as a dependency.
 
 ### Setting up github credentials
-* Generate an github personal access token with repo actions access. 
+* [Generate an github personal access token with repo actions access](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token) 
 * Create a file `github.properties` in project root. 
-* Add `github.properties filename to `.gitgnore` to avoid adding it to version control.
+* Add `github.properties` filename to `.gitgnore` to avoid adding it to version control.
 * Add the github values to the `github.properties` file
 ```bash
 GITHUB_USER=
