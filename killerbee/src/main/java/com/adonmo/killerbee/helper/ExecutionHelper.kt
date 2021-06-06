@@ -14,14 +14,15 @@ object ExecutionHelper {
 
     fun executeMQTTClientAction(
         actionMethod: () -> Unit,
-        errorCallbackMethod: (e: Exception) -> Unit
+        errorCallbackMethod: (e: Exception) -> Unit,
+        mqttEventsHandler: Handler? = null
     ) {
         try {
             actionMethod()
         } catch (me: MqttException) {
-            errorCallbackMethod(me)
+            executeCallback(mqttEventsHandler) { errorCallbackMethod(me) }
         } catch (e: Exception) {
-            errorCallbackMethod(e)
+            executeCallback(mqttEventsHandler) { errorCallbackMethod(e) }
         }
     }
 }

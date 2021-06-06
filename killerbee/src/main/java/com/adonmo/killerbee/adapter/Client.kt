@@ -1,5 +1,6 @@
 package com.adonmo.killerbee.adapter
 
+import android.os.Handler
 import com.adonmo.killerbee.IMQTTConnectionCallback
 import com.adonmo.killerbee.action.MQTTAction
 import com.adonmo.killerbee.action.MQTTActionContext
@@ -15,7 +16,8 @@ class Client(
     clientCallback: ClientCallback,
     private val mqttActionListener: MQTTActionListener,
     executorService: ScheduledExecutorService?,
-    private val androidConnectionCallback: IMQTTConnectionCallback
+    private val androidConnectionCallback: IMQTTConnectionCallback,
+    private val mqttEventsHandler: Handler? = null
 ) {
     private val mqttClient: MqttAsyncClient =
         ConnectionHelper.getMqttAsyncClient(connectOptions, executorService)
@@ -40,22 +42,31 @@ class Client(
                     connectOptions,
                     e
                 )
-            })
+            }, mqttEventsHandler
+        )
     }
 
     fun disconnect() {
-        ExecutionHelper.executeMQTTClientAction({
-            mqttClient.disconnect(
-                MQTTActionContext(action = MQTTAction.DISCONNECT),
-                mqttActionListener
-            )
-        }, { e -> androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, e) })
+        ExecutionHelper.executeMQTTClientAction(
+            {
+                mqttClient.disconnect(
+                    MQTTActionContext(action = MQTTAction.DISCONNECT),
+                    mqttActionListener
+                )
+            },
+            { e -> androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, e) },
+            mqttEventsHandler
+        )
     }
 
     fun forceDisconnect() {
-        ExecutionHelper.executeMQTTClientAction({
-            mqttClient.disconnectForcibly()
-        }, { e -> androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, e) })
+        ExecutionHelper.executeMQTTClientAction(
+            {
+                mqttClient.disconnectForcibly()
+            },
+            { e -> androidConnectionCallback.disconnectActionFinished(MQTTActionStatus.FAILED, e) },
+            mqttEventsHandler
+        )
     }
 
     fun publish(topic: String, payload: ByteArray, qos: Int, retained: Boolean) {
@@ -79,7 +90,8 @@ class Client(
                     payload,
                     e
                 )
-            })
+            }, mqttEventsHandler
+        )
     }
 
     fun subscribe(topicFilter: String, qos: Int) {
@@ -98,7 +110,8 @@ class Client(
                     topicFilter,
                     e
                 )
-            })
+            }, mqttEventsHandler
+        )
     }
 
     fun subscribeMultiple(topicFilters: Array<String>, qos: IntArray) {
@@ -120,6 +133,7 @@ class Client(
                     topicFilters,
                     e
                 )
-            })
+            }, mqttEventsHandler
+        )
     }
 }

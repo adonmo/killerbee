@@ -64,7 +64,6 @@ class ClientTest {
             executorService,
             androidConnectionCallback
         )
-
     }
 
     @Test

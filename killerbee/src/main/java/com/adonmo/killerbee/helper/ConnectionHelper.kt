@@ -86,7 +86,8 @@ object ConnectionHelper {
                 androidMqttActionCallback
             ),
             executorService,
-            androidMqttActionCallback
+            androidMqttActionCallback,
+            mqttEventsHandler
         )
     }
 }
