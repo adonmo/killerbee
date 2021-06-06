@@ -41,8 +41,8 @@ task clean(type: Delete) {
 
 ext {
     // KillerBee Library Info
-    libVersionCode = 1
-    libVersionName = '1.0.0'
+    libVersionCode = 2
+    libVersionName = '1.0.1'
     ktx_version = '1.3.2'
     app_compat_version = '1.3.0'
     junitVersion = '4.13.2'
