@@ -42,7 +42,7 @@ allprojects {
 ```
 ### Add dependency to build.gradle in app folder
 ```groovy
-implementation 'com.adonmo.libraries:killerbee:1.0.0'
+implementation 'com.adonmo.libraries:killerbee:1.0.1'
 ```
 
 ## Sample Implementation
