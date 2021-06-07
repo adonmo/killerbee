@@ -1,6 +1,8 @@
 # killerbee
 MQTT android client
 
+For comparison with [Paho Client](https://github.com/eclipse/paho.mqtt.android) check the blog on [Killer Bee vs Paho](https://medium.com/adonmo-tech/killer-bee-3d88ef82d1de).
+
 ## Adding as a Dependency
 This package is currently hosted as a github package. Github currently supports public package hosting but requires github personal access token to fetch them.
 In short you need to have a github account to use this as a dependency.
