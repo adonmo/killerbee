@@ -8,7 +8,7 @@ import com.adonmo.killerbee.action.MQTTActionListener
 import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.helper.ConnectionHelper
 import com.adonmo.killerbee.helper.ExecutionHelper
-import org.eclipse.paho.client.mqttv3.MqttAsyncClient
+import org.eclipse.paho.mqttv5.client.MqttAsyncClient
 import java.util.concurrent.ScheduledExecutorService
 
 class Client(

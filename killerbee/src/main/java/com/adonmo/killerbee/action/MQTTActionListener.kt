@@ -3,13 +3,13 @@ package com.adonmo.killerbee.action
 import android.os.Handler
 import com.adonmo.killerbee.IMQTTConnectionCallback
 import com.adonmo.killerbee.helper.ExecutionHelper
-import org.eclipse.paho.client.mqttv3.IMqttActionListener
-import org.eclipse.paho.client.mqttv3.IMqttToken
+import org.eclipse.paho.mqttv5.client.IMqttToken
+import org.eclipse.paho.mqttv5.client.MqttActionListener
 
 class MQTTActionListener(
     private val mqttEventsHandler: Handler?,
     private val mqttConnectionCallback: IMQTTConnectionCallback
-) : IMqttActionListener {
+) : MqttActionListener {
     override fun onSuccess(asyncActionToken: IMqttToken?) {
         executeUserActionCallback(asyncActionToken, MQTTActionStatus.SUCCESS)
     }

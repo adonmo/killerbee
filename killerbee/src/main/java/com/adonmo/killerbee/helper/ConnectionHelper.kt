@@ -6,15 +6,17 @@ import com.adonmo.killerbee.action.MQTTActionListener
 import com.adonmo.killerbee.adapter.Client
 import com.adonmo.killerbee.adapter.ClientCallback
 import com.adonmo.killerbee.adapter.ConnectOptions
-import org.eclipse.paho.client.mqttv3.MqttAsyncClient
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions
-import org.eclipse.paho.client.mqttv3.TimerPingSender
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import java.util.concurrent.ScheduledExecutorService
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptions
+import org.eclipse.paho.mqttv5.client.MqttAsyncClient
+import org.eclipse.paho.mqttv5.client.TimerPingSender
+import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence
+import org.eclipse.paho.mqttv5.common.MqttMessage
+import org.eclipse.paho.mqttv5.common.packet.MqttProperties
 
 object ConnectionHelper {
-    fun getMqttConnectOptions(connectOptions: ConnectOptions): MqttConnectOptions {
-        val mqttConnectOptions = MqttConnectOptions()
+    fun getMqttConnectOptions(connectOptions: ConnectOptions): MqttConnectionOptions {
+        val mqttConnectOptions = MqttConnectionOptions()
         connectOptions.customWebSocketHeaders?.let {
             mqttConnectOptions.customWebSocketHeaders = it
         }
@@ -32,11 +34,14 @@ object ConnectionHelper {
         }
         connectOptions.willDestination?.let { dest ->
             connectOptions.willMessagePayload?.let { payload ->
+                val mqttMessage = MqttMessage()
+                mqttMessage.payload= payload
+                mqttMessage.qos = connectOptions.willQos
+                mqttMessage.isRetained=connectOptions.willRetained
+
                 mqttConnectOptions.setWill(
                     dest,
-                    payload,
-                    connectOptions.willQos,
-                    connectOptions.willRetained
+                    mqttMessage
                 )
             }
         }
@@ -44,10 +49,10 @@ object ConnectionHelper {
             mqttConnectOptions.userName = connectOptions.username
         }
         connectOptions.password?.let {
-            mqttConnectOptions.password = connectOptions.password.toCharArray()
+            mqttConnectOptions.password = connectOptions.password.toByteArray()
         }
         mqttConnectOptions.isAutomaticReconnect = connectOptions.automaticReconnect
-        mqttConnectOptions.isCleanSession = connectOptions.cleanSession
+        mqttConnectOptions.isCleanStart = connectOptions.cleanStart
         mqttConnectOptions.maxReconnectDelay = connectOptions.maxReconnectDelay
         mqttConnectOptions.keepAliveInterval = connectOptions.keepAliveInterval
         mqttConnectOptions.connectionTimeout = connectOptions.connectionTimeout
@@ -55,8 +60,6 @@ object ConnectionHelper {
         mqttConnectOptions.executorServiceTimeout = connectOptions.executorServiceTimeout
         mqttConnectOptions.isHttpsHostnameVerificationEnabled =
             connectOptions.httpsHostnameVerificationEnabled
-        mqttConnectOptions.maxInflight = connectOptions.maxInFlight
-        mqttConnectOptions.mqttVersion = connectOptions.mqttVersion
         return mqttConnectOptions
     }
 
@@ -68,7 +71,7 @@ object ConnectionHelper {
             connectOptions.serverURI,
             connectOptions.clientID,
             MemoryPersistence(),
-            TimerPingSender(),
+            TimerPingSender(executorService),
             executorService
         )
     }

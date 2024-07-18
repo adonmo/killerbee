@@ -9,6 +9,7 @@ android {
     defaultConfig {
         applicationId "com.adonmo.sample.killerbee"
         minSdkVersion 19
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -42,8 +43,8 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.espressoVersion"
 
     //Library dependency
-    //implementation project(':killerbee')
+    implementation project(':killerbee')
 
     //Use for release testing with Maven Local/Central. Comment project based dependency line above
-    implementation 'com.adonmo.libraries:killerbee:1.0.1'
+//    implementation 'com.adonmo.libraries:killerbee:1.0.1'
 }
