@@ -2,6 +2,7 @@ package com.adonmo.killerbee
 
 import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.adapter.ConnectOptions
+import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse
 
 interface IMQTTConnectionCallback {
 
@@ -31,8 +32,8 @@ interface IMQTTConnectionCallback {
         throwable: Throwable? = null
     )
 
-    fun connectionLost(connectOptions: ConnectOptions, throwable: Throwable? = null)
-
     fun messageArrived(topic: String?, message: ByteArray?)
+
+    fun disconnected(connectOptions: ConnectOptions, disconnectResponse: MqttDisconnectResponse? = null)
 
 }

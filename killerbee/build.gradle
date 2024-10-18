@@ -11,8 +11,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode rootProject.ext.libVersionCode
-        versionName rootProject.ext.libVersionName
 
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -36,6 +34,7 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    namespace 'com.adonmo.killerbee'
 }
 
 dependencies {
@@ -50,5 +49,6 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.espressoVersion"
     testImplementation 'io.mockk:mockk:1.11.0'
 
-    api "org.eclipse.paho:org.eclipse.paho.client.mqttv3:${rootProject.ext.clientVersion}"
+//    api "org.eclipse.paho:org.eclipse.paho.client.mqttv3:${rootProject.ext.clientVersion}"
+    api "org.eclipse.paho:org.eclipse.paho.mqttv5.client:${rootProject.ext.clientVersion}"
 }

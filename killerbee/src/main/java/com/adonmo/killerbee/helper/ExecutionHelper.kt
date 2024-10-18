@@ -1,7 +1,7 @@
 package com.adonmo.killerbee.helper
 
 import android.os.Handler
-import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.mqttv5.common.MqttException
 
 object ExecutionHelper {
     fun executeCallback(mqttEventsHandler: Handler?, callbackMethod: () -> Unit) {

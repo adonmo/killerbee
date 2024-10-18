@@ -10,6 +10,7 @@ import com.adonmo.killerbee.IMQTTConnectionCallback
 import com.adonmo.killerbee.action.MQTTActionStatus
 import com.adonmo.killerbee.adapter.ConnectOptions
 import com.adonmo.killerbee.helper.Constants.LOG_TAG
+import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse
 import java.util.concurrent.ScheduledThreadPoolExecutor
 
 class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
@@ -32,9 +33,9 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
         executor = ScheduledThreadPoolExecutor(4)
         mqttClient = AndroidMQTTClient(
             ConnectOptions(
-                clientID = "OG",
-                serverURI = "tcp://broker.hivemq.com:1883",
-                cleanSession = true,
+                clientID = getRandomClientId(8),
+                serverURI = "wss://broker.emqx.io:8084",
+                cleanStart = true,
                 keepAliveInterval = 30,
                 maxReconnectDelay = 60000,
                 automaticReconnect = true,
@@ -96,13 +97,6 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
         }
     }
 
-    override fun connectionLost(connectOptions: ConnectOptions, throwable: Throwable?) {
-        Log.d(
-            LOG_TAG,
-            "Connection lost for [${connectOptions.clientID}] from [${connectOptions.serverURI}]"
-        )
-    }
-
     override fun messageArrived(
         topic: String?,
         message: ByteArray?
@@ -111,5 +105,19 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
             Log.d(LOG_TAG, "Received message [$message]")
         }
         //mqttClient.disconnect()
+    }
+
+    override fun disconnected(connectOptions: ConnectOptions, disconnectResponse: MqttDisconnectResponse?) {
+        Log.d(
+            LOG_TAG,
+            "Connection lost for [${connectOptions.clientID}] from [${connectOptions.serverURI}]"
+        )
+    }
+
+    fun getRandomClientId(length: Int) : String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return "kb-" + (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 }
