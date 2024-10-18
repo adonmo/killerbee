@@ -33,8 +33,8 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
         executor = ScheduledThreadPoolExecutor(4)
         mqttClient = AndroidMQTTClient(
             ConnectOptions(
-                clientID = "OG",
-                serverURI = "tcp://broker.hivemq.com:1883",
+                clientID = getRandomClientId(8),
+                serverURI = "wss://broker.emqx.io:8084",
                 cleanStart = true,
                 keepAliveInterval = 30,
                 maxReconnectDelay = 60000,
@@ -112,5 +112,12 @@ class MainActivity : AppCompatActivity(), IMQTTConnectionCallback {
             LOG_TAG,
             "Connection lost for [${connectOptions.clientID}] from [${connectOptions.serverURI}]"
         )
+    }
+
+    fun getRandomClientId(length: Int) : String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return "kb-" + (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 }
