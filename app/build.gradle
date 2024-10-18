@@ -47,5 +47,5 @@ dependencies {
     implementation project(':killerbee')
 
     //Use for release testing with Maven Local/Central. Comment project based dependency line above
-//    implementation 'com.adonmo.libraries:killerbee:1.0.1'
+//    implementation 'com.adonmo.libraries:killerbee:1.1.0'
 }
