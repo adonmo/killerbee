@@ -34,6 +34,7 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    namespace 'com.adonmo.killerbee'
 }
 
 dependencies {
