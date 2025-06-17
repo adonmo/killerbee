@@ -8,9 +8,10 @@ def LIB_VERSION = '1.1.0'
 def githubProperties = new Properties()
 githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
 
-task sourceJar(type: Jar) {
+tasks.register('sourceJar', Jar) {
+    archiveClassifier = 'sources'
     from android.sourceSets.main.java.srcDirs
-    classifier "sources"
+    from android.sourceSets.main.kotlin.srcDirs
 }
 
 publishing {
